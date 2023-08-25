@@ -1,150 +1,145 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
 
-
 body {
   background-color: #FFF2F5;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 20px;
+  color: #737373;
   height: 100vh;
   width: 100%;
-  max-width: 720px;
-  margin: 0 auto;
+  /* max-width: 500px; */
   text-align: center;
-  color: #737373;
-  font-family: 'Josefin Sans', sans-serif;
+  margin: 0 auto;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-}
-
-#start-screen {
-  margin: 25% auto;
-  height: 50%;
 }
 
 h1 {
   color: #F190B6;
-  margin: 25px;
-  font-size: 70px;
+  font-size: 50px;
+  margin: 20px auto
 }
 
 h2 {
   width: 180px;
-  margin: 15px auto;
-  font-size: 30px;
-}
-
-a {
   color: #F69CBF;
-  text-decoration: none;
+  font-size: 30px;
+  margin: 10px auto;
   cursor: pointer;
 }
 
-a:hover {
+h2:hover {
   font-size: 35px;
   color: #FFB9D4;
 }
 
 h3 {
   color: #F69CBF;
-  margin: 20px auto 5px auto;
   font-size: 25px;
+  margin: 20px auto 10px auto;
 }
 
-#start-screen p {
-  width: 75%;
-  margin: 25px auto;
-  font-size: 20px;
-}
-
-select {
-  font-size: 20px;
-  font-family: 'Josefin Sans', sans-serif;
+select, button {
+  border-radius: 5px;
   background-color: #FFF2F5;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 20px;
   color: #737373;
   padding: 5px;
-  margin: 10px auto 0 auto;
+}
+
+p {
+  width: 90%;
+  max-width: 500px;
+  margin: 20px auto;
+  line-height: 30px;
+}
+
+#navbar nav {
+  position: absolute;
+  top: 0;
+  background-color: #EFBFC6;
+  width: 100%;
+  height: 100px;
+  display: grid;
+  /* grid-template-columns: repeat(3, 1fr); */
+  grid-template-columns: 100px auto 100px;
+  align-items: center;
+}
+
+#logo {
+  width: 90px;
+  height: 100%;
+  object-fit: cover;
+  margin: 0 25px;
   cursor: pointer;
 }
 
-#navbar {
-  background-color: #EFBFC6;
-  width: 100%;
-  height: 70px;
-  position: absolute;
-  top: 0;
-  text-align: left;
-}
-
-#navbar img {
-  width: 80px;
-  height: 100%;
-  margin: 0 10px;
-}
-
 #navbar h3 {
+  font-size: 40px;
   color: #FF7CAF;
-  position: absolute;
-  top: 0;
-  left: 60px;
-  margin: 25px;
+  margin: 0 auto 0 15px;
 }
 
 #hamburger {
-  height: 80%;
-  margin: 7px;
-  position: absolute;
-  top: 0;
-  right: 0;
+  /* height: 100%; */
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto
+
 }
 
 #hamburger * {
-  width: 40px;
-  margin: 10px;
-  border: 3px solid #FF7CAF;
+  width: 50px;
+  margin: 5px;
+  border: 4px solid #FF7CAF;
+  border-radius: 10px;
 }
 
-#wallet {
-  position: absolute;
-  top: 80px;
-  right: 20px;
+#rules-screen img {
+  border-radius: 10px;
+  border: 2px solid black;
+  width: 80px;
+  height: 80px;
+  margin: 5px;
 }
 
-#game-screen h4 {
-  font-size: 20px;
+#rules-screen .container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+#rules-screen {
+  height: 70%;
+}
+
+#new-para {
+  font-size: 22px;
+  color: #F69CBF;
+  text-shadow: 0.5px 0.5px #737373;
 }
 
 #game-screen img {
+  border-radius: 10px;
+  border: 2px solid black;
   width: 100px;
   height: 100px;
-  object-fit: cover;
+  margin: 5px;
 }
 
-#game-screen #spin {
-  width: 100px;
-  height: 40px;
-  font-family: 'Josefin Sans', sans-serif;
+#spin {
+  color: #FF7CAF;
   font-size: 25px;
   font-weight: bold;
-  background-color:#FFF2F5;
-  color: #FF7CAF;
-  border-radius: 5px;
-  margin: 40px;
+  margin: 20px;
+  padding: 5px 10px;
 }
 
-#rules-screen .container{
-  display: flex;
-  flex-direction: column;
-  margin: 25px;
+#spin:hover {
+  color: #F69CBF;
 }
 
-#rules-screen img{
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-}
-
-#rules-screen p {
-  line-height: 25px;
-  font-size: 20px;
-  text-align: left;
-  margin: 10px 20px 0 20px;
+.opacity {
+  opacity: 0.5;
 }

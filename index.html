@@ -1,76 +1,78 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>slots</title>
 
   <link rel="stylesheet" href="style.css">
-
-  <script src="./main.js" defer></script>
+  <script src="main.js" defer></script>
 </head>
 
 <body>
-  
+
   <!-- start screen -->
   <section id="start-screen">
     <h1>slots</h1>
 
-    <h2 id="start-game"><a>start game</a></h2>
-    <h2 id="game-rules"><a>game rules</a></h2>
+    <h2 id="start-game">start game</h2>
+    <h2 id="game-rules">game rules</h2>
 
     <h3>difficulty</h3>
     <select name="difficulty" id="difficulty">
       <option value="easy" >easy</option>
       <option value="intermediate" selected>intermediate</option>
-      <option value="hard">difficult</option>
+      <option value="hard">hard</option>
     </select>
 
     <div id="difficulty-info">
       <p class="easy" hidden>deal with less icons</p>
 
-      <p class="intermediate" >beware of grenades!<br />
+      <p class="intermediate" ><strong>beware of grenades!</strong><br />
         kitten + bullet combo will save you from grenade attacks</p>
 
-      <p class="hard" hidden>beware of grenades!<br />
+      <p class="hard" hidden><strong>beware of grenades!</strong><br />
         kittens and bullets won't save you now</p>
     </div>
 
   </section>
 
   <!-- navbar -->
-  <nav id="navbar" hidden>
-    <img src="./assets/images/nav-logo.png" alt="slots">
-    <h3>slots</h3>
-    <div id="hamburger">
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-  </nav>
+  <section id="navbar" hidden>
+    <nav>
+      <img id="logo" src="./assets/images/nav-logo.png" alt="slots">
+      <h3>slots</h3>
+      <div id="hamburger">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </nav>
+
+    <section id="sublinks">
+
+
+    </section>
+  </section>
+  
 
   <!-- rules screen -->
   <section id="rules-screen" hidden>
     <h3>game rules</h3>
     <div class="container">
-      <div>
       <img src="./assets/images/cherry.png" alt="cherry">
       <img src="./assets/images/money.png" alt="money">
       <img src="./assets/images/seven.png" alt="seven">
-    </div>
-    <div>
       <img src="./assets/images/crystal.png" alt="crystal">
       <img src="./assets/images/kitten.png" alt="kitten">
       <img src="./assets/images/bell.png" alt="bell">
-    </div>
-    <div>
       <img src="./assets/images/bullets.png" alt="bullets">
       <img src="./assets/images/grenade.png" alt="grenade">
-    </div>
+
     </div>
     
+    <p id="new-para"></p>
     <p>starting wallet amount: $100<br/>
 
       choose bet amounts from: $5, $10, $50<br/>
@@ -79,9 +81,6 @@
       result: bet amount * 5<br/>
       
       click on an icon for more info ...</p>
-
-    <p id="new-para">outcome: 3 cherry icons<br/>
-      result: bet amount * 10</p>
 
   </section>
 

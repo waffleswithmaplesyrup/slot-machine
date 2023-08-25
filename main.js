@@ -101,6 +101,39 @@ function startScreenActive() {
 }
 startScreenActive();
 
+//* ======================== NAV BAR ============================
+
+//!----- constants -----*/
+
+//!----- state variables -----*/
+
+//!----- cached elements  -----*/
+const logo = document.querySelector('#logo');
+
+//!----- event listeners -----*/
+//* listen to logo being clicked
+logo.addEventListener('click', () => {
+
+  //* hide rules screen
+  rulesScreen.hidden = true;
+
+  //* hide game screen
+  gameScreen.hidden = true;
+  
+  //* unhide start screen
+  startScreen.hidden = false;
+
+  //* hide navbar
+  navBar.hidden = true;
+});
+
+
+//!----- render functions -----*/
+
+//!----- other functions -----*/
+
+
+
 //* ======================== GAME RULES SCREEN ============================
 
 //!----- constants -----*/
@@ -109,11 +142,68 @@ startScreenActive();
 
 //!----- cached elements  -----*/
 
+//* save images in an array
+const images = document.querySelectorAll('#rules-screen .container img');
+
+//* save #new-para to update innerHTML
+const newPara = document.querySelector('#new-para');
+
 //!----- event listeners -----*/
+
+//* cycle through array
+images.forEach((img) => {
+
+  //* listen to picture being clicked
+  img.addEventListener('click', (event) => {
+
+    //* create new paragraph with rules relating to the icon clicked
+    newParagraph(event.target.alt);
+
+    //* add class opacity to a clicked image for 100ms
+    img.classList.add('opacity');
+    setTimeout(() => {img.classList.remove('opacity')}, 100);
+
+  });
+  
+
+});
+
 
 //!----- render functions -----*/
 
 //!----- other functions -----*/
+function newParagraph(image) {
+  const base = 10;
+  //* display specific text for each icon
+  switch (image) {
+    case 'cherry':
+      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base}`;
+      break;
+    case 'money':
+      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base}`;
+      break;
+    case 'seven':
+      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base}`;
+      break;
+    case 'crystal':
+      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base+10}`;
+      break;
+    case 'kitten':
+      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base+10}.<br/>outcome: at least 1 ${image} + 1 bullets<br/>result: kitten save (protect against grenade attack)`;
+      break;
+    case 'bell':
+      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base+10}`;
+      break;
+    case 'bullets':
+      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base+20}`;
+      break;
+    case 'grenade':
+      newPara.innerHTML = `outcome: at least 2 ${image} icons<br/>result: wallet - $50 (unless kitten save)`;
+      break;
+    default:
+      console.log(image);
+  }
+}
 
 
 //* ======================== GAME SCREEN ============================
