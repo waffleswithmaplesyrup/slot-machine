@@ -1,13 +1,116 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/main.js"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>slots</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="./main.js" defer></script>
+</head>
+
+<body>
+  
+  <!-- start screen -->
+  <section id="start-screen">
+    <h1>slots</h1>
+
+    <h2 id="start-game"><a>start game</a></h2>
+    <h2 id="game-rules"><a>game rules</a></h2>
+
+    <h3>difficulty</h3>
+    <select name="difficulty" id="difficulty">
+      <option value="easy" >easy</option>
+      <option value="intermediate" selected>intermediate</option>
+      <option value="hard">difficult</option>
+    </select>
+
+    <div id="difficulty-info">
+      <p class="easy" hidden>deal with less icons</p>
+
+      <p class="intermediate" >beware of grenades!<br />
+        kitten + bullet combo will save you from grenade attacks</p>
+
+      <p class="hard" hidden>beware of grenades!<br />
+        kittens and bullets won't save you now</p>
+    </div>
+
+  </section>
+
+  <!-- navbar -->
+  <nav id="navbar" hidden>
+    <img src="./assets/images/nav-logo.png" alt="slots">
+    <h3>slots</h3>
+    <div id="hamburger">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </nav>
+
+  <!-- rules screen -->
+  <section id="rules-screen" hidden>
+    <h3>game rules</h3>
+    <div class="container">
+      <div>
+      <img src="./assets/images/cherry.png" alt="cherry">
+      <img src="./assets/images/money.png" alt="money">
+      <img src="./assets/images/seven.png" alt="seven">
+    </div>
+    <div>
+      <img src="./assets/images/crystal.png" alt="crystal">
+      <img src="./assets/images/kitten.png" alt="kitten">
+      <img src="./assets/images/bell.png" alt="bell">
+    </div>
+    <div>
+      <img src="./assets/images/bullets.png" alt="bullets">
+      <img src="./assets/images/grenade.png" alt="grenade">
+    </div>
+    </div>
+    
+    <p>starting wallet amount: $100<br/>
+
+      choose bet amounts from: $5, $10, $50<br/>
+      
+      outcome: at least any two same icons<br/>
+      result: bet amount * 5<br/>
+      
+      click on an icon for more info ...</p>
+
+    <p id="new-para">outcome: 3 cherry icons<br/>
+      result: bet amount * 10</p>
+
+  </section>
+
+
+  <!-- game screen -->
+  <section id="game-screen" hidden>
+    <header>
+      <h3 id="wallet">wallet: $<span>100</span></h3>
+      <h4>bet amount: $
+        <select name="bet" id="bet">
+          <option value="five">5</option>
+          <option value="ten">10</option>
+          <option value="fifty">50</option>
+        </select>
+      </h4>
+    </header>
+
+    <section>
+      <img src="./assets/images/kitten.png" alt="kitten">
+      <img src="./assets/images/kitten.png" alt="kitten">
+      <img src="./assets/images/kitten.png" alt="kitten">
+    </section>
+
+    <button id="spin">spin</button>
+
+  </section>
+
+
+
+</body>
+
 </html>

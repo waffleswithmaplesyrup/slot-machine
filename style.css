@@ -1,97 +1,150 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
 
 body {
-  margin: 0;
+  background-color: #FFF2F5;
+  height: 100vh;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+  color: #737373;
+  font-family: 'Josefin Sans', sans-serif;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+#start-screen {
+  margin: 25% auto;
+  height: 50%;
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  color: #F190B6;
+  margin: 25px;
+  font-size: 70px;
 }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+h2 {
+  width: 180px;
+  margin: 15px auto;
+  font-size: 30px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vanilla:hover {
-  filter: drop-shadow(0 0 2em #f7df1eaa);
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+a {
+  color: #F69CBF;
+  text-decoration: none;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+a:hover {
+  font-size: 35px;
+  color: #FFB9D4;
+}
+
+h3 {
+  color: #F69CBF;
+  margin: 20px auto 5px auto;
+  font-size: 25px;
+}
+
+#start-screen p {
+  width: 75%;
+  margin: 25px auto;
+  font-size: 20px;
+}
+
+select {
+  font-size: 20px;
+  font-family: 'Josefin Sans', sans-serif;
+  background-color: #FFF2F5;
+  color: #737373;
+  padding: 5px;
+  margin: 10px auto 0 auto;
+  cursor: pointer;
+}
+
+#navbar {
+  background-color: #EFBFC6;
+  width: 100%;
+  height: 70px;
+  position: absolute;
+  top: 0;
+  text-align: left;
+}
+
+#navbar img {
+  width: 80px;
+  height: 100%;
+  margin: 0 10px;
+}
+
+#navbar h3 {
+  color: #FF7CAF;
+  position: absolute;
+  top: 0;
+  left: 60px;
+  margin: 25px;
+}
+
+#hamburger {
+  height: 80%;
+  margin: 7px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+#hamburger * {
+  width: 40px;
+  margin: 10px;
+  border: 3px solid #FF7CAF;
+}
+
+#wallet {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+}
+
+#game-screen h4 {
+  font-size: 20px;
+}
+
+#game-screen img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+#game-screen #spin {
+  width: 100px;
+  height: 40px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 25px;
+  font-weight: bold;
+  background-color:#FFF2F5;
+  color: #FF7CAF;
+  border-radius: 5px;
+  margin: 40px;
+}
+
+#rules-screen .container{
+  display: flex;
+  flex-direction: column;
+  margin: 25px;
+}
+
+#rules-screen img{
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+#rules-screen p {
+  line-height: 25px;
+  font-size: 20px;
+  text-align: left;
+  margin: 10px 20px 0 20px;
 }
