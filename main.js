@@ -55,49 +55,46 @@ function selectDifficulty() {
 }
 
 
-//* start game
-function startGame() {
-  //* listen to start button being clicked
-  startButton.addEventListener('click', () => {
-
-    //* set #start-screen hidden 
-    startScreen.hidden = true;
-
-    //* unhide #game-screen
-    gameScreen.hidden = false;
-
-    //* unhide nav bar
-    navBar.hidden = false;
-  });
-}
-
-
-//* show game rules
-function showRules() {
-  //* listen to rules button being clicked
-  rulesButton.addEventListener('click', () => {
-
-    //* set #start-screen hidden 
-    startScreen.hidden = true;
-
-    //* unhide #rules-screen
-    rulesScreen.hidden = false;
-
-    //* unhide nav bar
-    navBar.hidden = false;
-  });
-}
-
 
 //!----- render functions -----*/
+//* start game
+function renderStartGame() {
+  //* set #start-screen hidden 
+  startScreen.hidden = true;
 
+  //* set #rules-screen hidden
+  rulesScreen.hidden = true;
+
+  //* unhide #game-screen
+  gameScreen.hidden = false;
+
+  //* unhide nav bar
+  navBar.hidden = false;
+}
+
+//* show game rules
+function renderRules() {
+  //* set #start-screen hidden 
+  startScreen.hidden = true;
+
+  //* set #game-screen hidden
+  gameScreen.hidden = true;
+
+  //* unhide #rules-screen
+  rulesScreen.hidden = false;
+
+  //* unhide nav bar
+  navBar.hidden = false;
+}
 
 //!----- other functions -----*/ 
 function startScreenActive() {
 
   selectDifficulty();
-  startGame();
-  showRules();
+  //* listen to start button being clicked
+  startButton.addEventListener('click', () => renderStartGame());
+  //* listen to rules button being clicked
+  rulesButton.addEventListener('click', () => renderRules());
 }
 startScreenActive();
 
@@ -109,32 +106,99 @@ startScreenActive();
 
 //!----- cached elements  -----*/
 const logo = document.querySelector('#logo');
+const hamburger = document.querySelector('#hamburger');
+const sublinks = document.querySelector('#sublinks');
+const sublinkButtons = document.querySelectorAll('#sublinks h4');
+
 
 //!----- event listeners -----*/
-//* listen to logo being clicked
-logo.addEventListener('click', () => {
+//* listen to logo being clicked and go back to start screen
+logo.addEventListener('click', () => renderStartScreen());
 
+//* listen to hamburger being clicked and show and hide sublinks
+let hamburgerCount = 0;
+hamburger.addEventListener('click', () => renderSublinks());
+
+//* cycle through sublinkButtons
+sublinkButtons.forEach((button) => {
+  //* listen to button being clicked and render sublink screens
+  button.addEventListener('click', (event) => renderSublinkScreens(event.target.innerText));
+});
+
+
+//!----- render functions -----*/
+function renderStartScreen() {
   //* hide rules screen
   rulesScreen.hidden = true;
 
   //* hide game screen
   gameScreen.hidden = true;
-  
+
   //* unhide start screen
   startScreen.hidden = false;
 
   //* hide navbar
   navBar.hidden = true;
-});
 
+  //* check if hamburger is activated
+  if (hamburger.classList.contains('nav-activated')) {
+    //* close sublinks
+    renderSublinks();
+  }
 
-//!----- render functions -----*/
+  //* reset the new paragraph to empty
+  newPara.innerHTML = '';
+}
+
+function renderSublinks() {
+  if (hamburgerCount % 2 === 0) {
+    //* set hamburger nav active
+    hamburger.classList.add('nav-activated');
+
+    //* unhide sublinks
+    sublinks.hidden = false;
+  } else {
+    //* remove nav-activated class
+    hamburger.classList.remove('nav-activated');
+    //* hide sublinks
+    sublinks.hidden = true;
+  }
+  
+  hamburgerCount++;
+}
+
+function renderSublinkScreens(button) {
+  switch(button) {
+    //* if 'game rules' is clicked
+    case 'game rules':
+      //* render rules screen
+      renderRules();
+      //* close sublinks
+      renderSublinks();
+      break;
+    //* if 'start game' is clicked
+    case 'start game':
+      //* render game screen
+      renderStartGame();
+      //* close sublinks
+      renderSublinks();
+      break;
+    //* if 'restart' is clicked
+    case 'restart':
+      //* render start screen
+      renderStartScreen();
+      break;
+    default:
+  }
+  //* reset the new paragraph to empty
+  newPara.innerHTML = '';
+}
 
 //!----- other functions -----*/
 
 
 
-//* ======================== GAME RULES SCREEN ============================
+//* ======================== RULES SCREEN ============================
 
 //!----- constants -----*/
 
@@ -177,25 +241,17 @@ function newParagraph(image) {
   //* display specific text for each icon
   switch (image) {
     case 'cherry':
-      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base}`;
-      break;
     case 'money':
-      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base}`;
-      break;
     case 'seven':
-      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base}`;
+      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${base}`;
       break;
     case 'crystal':
-      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base+10}`;
-      break;
     case 'kitten':
-      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base+10}.<br/>outcome: at least 1 ${image} + 1 bullets<br/>result: kitten save (protect against grenade attack)`;
-      break;
     case 'bell':
-      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base+10}`;
+      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${base+10}`;
       break;
     case 'bullets':
-      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount * ${base+20}`;
+      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${base+20}`;
       break;
     case 'grenade':
       newPara.innerHTML = `outcome: at least 2 ${image} icons<br/>result: wallet - $50 (unless kitten save)`;
