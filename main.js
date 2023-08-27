@@ -6,6 +6,28 @@
 //!----- state variables -----*/
 let difficulty = 'intermediate';
 
+class Game {
+  constructor() {
+    //* initial difficulty setting. can change
+    this.difficulty = 'intermediate';
+
+    //* initial wallet amount
+    this.wallet = 100;
+
+    //* initial spin outcome value
+    this.spinOutcome = [];
+
+    //* initial bet amount
+    this.betAmt = 5;
+
+    //* inital result
+    this.result = '';
+  }
+}
+
+const game = new Game();
+
+
 //!----- cached elements  -----*/
 
 //? save app screens
@@ -37,12 +59,12 @@ function selectDifficulty() {
   //* listen to dropDown being clicked
   dropDown.addEventListener('change', (event) => {
     //* save the game difficulty chosen
-    difficulty = event.target.value;
+    game.difficulty = event.target.value;
     
     //* cycle through difficultyInfo array
     for (let i=0; i<difficultyInfo.length; i++) {
       //* check if the paragraph class matches difficulty selected
-      if (difficultyInfo[i].getAttribute('class') === difficulty) {
+      if (difficultyInfo[i].getAttribute('class') === game.difficulty) {
         //* unhide the paragraph
         difficultyInfo[i].hidden = false;
       } else {
@@ -70,6 +92,9 @@ function renderStartGame() {
 
   //* unhide nav bar
   navBar.hidden = false;
+
+  //* render starting icons
+  renderStartingIcons();
 }
 
 //* show game rules
@@ -271,20 +296,189 @@ const pictures = ['cherry', 'money', 'seven', 'crystal', 'kitten', 'bell', 'bull
 //* create a class so easier to transform pictures into objects inside an array
 class Icon {
   //* construct properties
-  constructor(name) {
+  constructor(alt) {
+    this.alt = alt;
+    this.src = `./assets/images/${alt}.png`;
 
+    //* add method that transforms the object into an img element on html
+    this.makeIntoElement = () => renderNewImg(this.alt, this.src);
   }
 }
+
+//* cycle through pictures -> trasnform each item into an object -> push into new array
+const icons = pictures.map((item) => new Icon(item));
+
+//* for easy mode: there are only 4 icons
+const easy = icons.slice(0, 4);
+
 
 //!----- state variables -----*/
 
 //!----- cached elements  -----*/
+const wallet = document.querySelector('#wallet span');
+const betSelect = document.querySelector('#bet');
+const spin = document.querySelector('#spin');
+const iconsDiv = document.querySelector('#icons');
 
 //!----- event listeners -----*/
 
+//* listen to betSelect being clicked
+betSelect.addEventListener('change', (event) => {
+  //* save the bet amount chosen
+  game.betAmt = parseInt(event.target.value);
+
+});
+
+//* listen to spin button being clicked
+spin.addEventListener('click', () => {
+  //* result back to empty
+  game.result = '';
+  
+  //* bet amount get removed from wallet
+  game.wallet -= game.betAmt;
+
+  //* render wallet
+  wallet.innerText = game.wallet;
+
+  renderSpin();
+  checkResult();
+});
+
 //!----- render functions -----*/
+function renderStartingIcons() {
+  //* empty iconsDiv
+  iconsDiv.innerHTML = '';
+
+  //* generate kitten icon three times
+  for (let i=0; i<3; i++) {
+    icons[4].makeIntoElement();
+  }
+}
+
+function renderSpin() {
+  //* empty iconsDiv
+  iconsDiv.innerHTML = '';
+  //* each time spin button is clicked, empty spinOutcome
+  game.spinOutcome = [];
+
+  //* generate an icon three times
+  for (let i=0; i<3; i++) {
+    //* pick random icon
+    const iconChosen = generateRandomIcon();
+
+    //* display random icons on screen
+    iconChosen.makeIntoElement();
+
+    //* put icons generated into spinOutcome array
+    game.spinOutcome.push(iconChosen);
+  }
+  
+}
+
+function renderResults(text) {
+  const spinResult = document.querySelector('#spin-result');
+
+  //* empty spinResult
+  spinResult.innerHTML = '';
+
+  //* create new element
+  const newElement = document.createElement('p');
+  newElement.innerText = text;
+
+  //* append into #spin-result
+  spinResult.append(newElement);
+}
+
+function renderNewImg(alt, src) {
+  //* create new img element
+  const newImg = document.createElement('img');
+
+  //* set iconChosen as img src
+  newImg.setAttribute('src', src);
+  newImg.setAttribute('alt', alt);
+
+  //* append to iconDiv
+  iconsDiv.append(newImg);
+}
+
 
 //!----- other functions -----*/
 
+function generateRandomIcon() {
+  let randomIndex = '';
+  //* if difficulty is easy
+  if (game.difficulty === 'easy') {
+    //* only select from ['cherry', 'money', 'seven', 'crystal']
+    randomIndex = Math.floor(Math.random() * easy.length);
+    return easy[randomIndex];
+  } else {
+    //* intermediate and hard modes use all icons
+    randomIndex = Math.floor(Math.random() * icons.length);
+    return icons[randomIndex];
+  }
+}
 
+function checkResult() {
+  game.spinOutcome = game.spinOutcome.reduce(iconCount, {});
+  console.log(game.spinOutcome);
+
+  // if ((game.spinOutcome['cherry'] === 3) || (game.spinOutcome['money'] === 3) || (game.spinOutcome['seven'] === 3)) {
+  //   game.wallet += game.betAmt * 10;
+  // } else if ((game.spinOutcome['crystal'] === 3) || (game.spinOutcome['kitten'] === 3) || (game.spinOutcome['bell'] === 3)) {
+  //   game.wallet += game.betAmt * 20;
+  // } else if (game.spinOutcome['bullets'] === 3) {
+  //   game.wallet += game.betAmt * 30;
+  // } else if (game.spinOutcome['grenade'] >= 2) {
+  //   game.wallet -= 50;
+  // }
+
+  ['cherry', 'money', 'seven'].forEach((item) => {
+    if (game.spinOutcome[item] === 3) {
+      game.wallet += game.betAmt * 10;
+      game.result = `Three ${item}s. You earn $${game.betAmt*10}.`;
+    } else if (game.spinOutcome[item] === 2) {
+      game.wallet += game.betAmt * 5;
+      game.result = `Two ${item}s. You earn $${game.betAmt*5}.`;
+    } 
+  });
+
+  ['crystal', 'kitten', 'bell'].forEach((item) => {
+    if (game.spinOutcome[item] === 3) {
+      game.wallet += game.betAmt * 20;
+      game.result = `Three ${item}s. You earn $${game.betAmt*20}.`;
+    } else if (game.spinOutcome[item] === 2) {
+      game.wallet += game.betAmt * 5;
+      game.result = `Two ${item}s. You earn $${game.betAmt*5}.`;
+    } 
+  });
+
+  ['bullets'].forEach((item) => {
+    if (game.spinOutcome[item] === 3) {
+      game.wallet += game.betAmt * 30;
+      game.result = `Three ${item}. You earn $${game.betAmt*30}.`;
+    } else if (game.spinOutcome[item] === 2) {
+      game.wallet += game.betAmt * 5;
+      game.result = `Two ${item}. You earn $${game.betAmt*5}.`;
+    } 
+  });
+
+  if (game.spinOutcome['grenade'] >= 2) {
+      game.wallet -= 50;
+      game.result = 'Grenade attack! You lose $50.';
+  } 
+
+
+  wallet.innerText = game.wallet;
+  console.log(game.wallet);
+  renderResults(game.result);
+}
+
+function iconCount(obj, currentIcon) {
+  if (obj[currentIcon.alt]) {
+    obj[currentIcon.alt] += 1;
+  } else {
+    obj[currentIcon.alt] = 1;
+  }
+  return obj;
+}
 

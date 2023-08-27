@@ -7,7 +7,6 @@ body {
   color: #737373;
   height: 100vh;
   width: 100%;
-  /* max-width: 820px; */
   text-align: center;
   margin: 0 auto;
   display: flex;
@@ -132,17 +131,22 @@ p {
 
 #rules-screen .container {
   width: 80%;
+  max-width: 400px;
   margin: 0 auto;
 }
 
 #rules-screen {
-  height: 80%;
+  height: 100%;
+  margin-top: 100px;
+
 }
 
 #rules-screen .paragraphs {
   display: flex;
   flex-direction: column;
   text-align: left;
+  max-width: 400px;
+  margin: auto;
 }
 
 #new-para {
@@ -152,12 +156,22 @@ p {
   margin-bottom: 0;
 }
 
-#game-screen img {
+#game-screen {
+  height: 100%;
+  margin-top: 150px;
+}
+
+#icons img {
   border-radius: 10px;
   border: 2px solid black;
   width: 100px;
   height: 100px;
   margin: 5px;
+}
+
+#game-screen p {
+  margin: 0 auto;
+  margin-bottom: 50px;
 }
 
 #spin {
@@ -178,10 +192,11 @@ p {
 }
 
 
-@media only screen and (min-width: 820px) {
+@media only screen and (min-width: 650px){
 
   #rules-screen > div {
-    margin: 25px;
+    max-width: 800px;
+    margin: 25px auto;
     display: grid;
     grid-template-columns: 50% 50%;
   }
