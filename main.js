@@ -333,15 +333,23 @@ betSelect.addEventListener('change', (event) => {
 spin.addEventListener('click', () => {
   //* result back to empty
   game.result = '';
+
+  //* check if wallet amount is more than bet amount
+  if (game.wallet >= game.betAmt) {
+    //* bet amount get removed from wallet
+    game.wallet -= game.betAmt;
+
+    //* render wallet
+    wallet.innerText = game.wallet;
+
+    renderSpin();
+    checkResult();
+  } else {
+    game.result = "You don't have enough money.";
+    renderResults(game.result);
+  }
+
   
-  //* bet amount get removed from wallet
-  game.wallet -= game.betAmt;
-
-  //* render wallet
-  wallet.innerText = game.wallet;
-
-  renderSpin();
-  checkResult();
 });
 
 //!----- render functions -----*/
@@ -422,23 +430,13 @@ function checkResult() {
   game.spinOutcome = game.spinOutcome.reduce(iconCount, {});
   console.log(game.spinOutcome);
 
-  // if ((game.spinOutcome['cherry'] === 3) || (game.spinOutcome['money'] === 3) || (game.spinOutcome['seven'] === 3)) {
-  //   game.wallet += game.betAmt * 10;
-  // } else if ((game.spinOutcome['crystal'] === 3) || (game.spinOutcome['kitten'] === 3) || (game.spinOutcome['bell'] === 3)) {
-  //   game.wallet += game.betAmt * 20;
-  // } else if (game.spinOutcome['bullets'] === 3) {
-  //   game.wallet += game.betAmt * 30;
-  // } else if (game.spinOutcome['grenade'] >= 2) {
-  //   game.wallet -= 50;
-  // }
-
   ['cherry', 'money', 'seven'].forEach((item) => {
     if (game.spinOutcome[item] === 3) {
       game.wallet += game.betAmt * 10;
       game.result = `Three ${item}s. You earn $${game.betAmt*10}.`;
     } else if (game.spinOutcome[item] === 2) {
-      game.wallet += game.betAmt * 5;
-      game.result = `Two ${item}s. You earn $${game.betAmt*5}.`;
+      game.wallet += game.betAmt * 2;
+      game.result = `Two ${item}s. You earn $${game.betAmt * 2}.`;
     } 
   });
 
@@ -447,8 +445,8 @@ function checkResult() {
       game.wallet += game.betAmt * 20;
       game.result = `Three ${item}s. You earn $${game.betAmt*20}.`;
     } else if (game.spinOutcome[item] === 2) {
-      game.wallet += game.betAmt * 5;
-      game.result = `Two ${item}s. You earn $${game.betAmt*5}.`;
+      game.wallet += game.betAmt * 2;
+      game.result = `Two ${item}s. You earn $${game.betAmt * 2}.`;
     } 
   });
 
@@ -457,8 +455,8 @@ function checkResult() {
       game.wallet += game.betAmt * 30;
       game.result = `Three ${item}. You earn $${game.betAmt*30}.`;
     } else if (game.spinOutcome[item] === 2) {
-      game.wallet += game.betAmt * 5;
-      game.result = `Two ${item}. You earn $${game.betAmt*5}.`;
+      game.wallet += game.betAmt * 2;
+      game.result = `Two ${item}. You earn $${game.betAmt * 2}.`;
     } 
   });
 
