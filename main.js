@@ -43,6 +43,12 @@ const gameScreen = document.querySelector('#game-screen');
 //* save navbar
 const navBar = document.querySelector('#navbar');
 
+//* save screens inside array
+const screens = [startScreen, rulesScreen, gameScreen, navBar];
+
+// //* save screens inside an array
+// const screens = document.querySelectorAll('section');
+
 //? save start screen buttons
 //* save #difficulty dropdown menu element
 const dropDown = document.querySelector('#difficulty');
@@ -65,20 +71,19 @@ function selectDifficulty() {
     game.difficulty = event.target.value;
     
     //* cycle through difficultyInfo array
-    for (let i=0; i<difficultyInfo.length; i++) {
-      //* check if the paragraph class matches difficulty selected
-      if (difficultyInfo[i].getAttribute('class') === game.difficulty) {
+    difficultyInfo.forEach((infoElement) => {
+      //* check if game difficulty matches one of the element's classes
+      if (infoElement.classList.contains(game.difficulty)) {
         //* unhide the paragraph
-        difficultyInfo[i].hidden = false;
+        infoElement.hidden = false;
       } else {
         //* hide the rest
-        difficultyInfo[i].hidden = true;
+        infoElement.hidden = true;
       }
-    }
+    });
 
   });
 }
-
 
 
 //!----- render functions -----*/
@@ -90,18 +95,9 @@ function renderStartGame() {
   betSelect[0].selected = true;
   //* empty result paragraph
   renderResults('');
-  
-  //* set #start-screen hidden 
-  startScreen.hidden = true;
 
-  //* set #rules-screen hidden
-  rulesScreen.hidden = true;
-
-  //* unhide #game-screen
-  gameScreen.hidden = false;
-
-  //* unhide nav bar
-  navBar.hidden = false;
+  //* unhide gameScreen, hide the rest
+  unhide(gameScreen);
 
   //* render starting icons
   renderStartingIcons();
@@ -109,20 +105,31 @@ function renderStartGame() {
 
 //* show game rules
 function renderRules() {
-  //* set #start-screen hidden 
-  startScreen.hidden = true;
 
-  //* set #game-screen hidden
-  gameScreen.hidden = true;
-
-  //* unhide #rules-screen
-  rulesScreen.hidden = false;
-
-  //* unhide nav bar
-  navBar.hidden = false;
+  //* unhide rulesScreen, hide the rest
+  unhide(rulesScreen);
 }
 
 //!----- other functions -----*/ 
+//* unhide selected screen, hide the rest
+function unhide(main) {
+  //* unhide screen
+  main.hidden = false;
+
+  //* cycle through screens array
+  screens.forEach((screen) => {
+    //* hide all screens that are not main
+    if (screen !== main) {
+      screen.hidden = true;
+      //* if main is not startScreen
+      if (main !== startScreen) {
+        //* unhide navbar
+        navBar.hidden = false;
+      }
+    }
+  });
+}
+
 function startScreenActive() {
   selectDifficulty();
   //* listen to start button being clicked
@@ -163,20 +170,11 @@ sublinkButtons.forEach((button) => {
 //!----- render functions -----*/
 function renderStartScreen() {
 
-  //* every time start screen is activated, initialise game object
+  //* every time start screen is activated, reset game
   game = new Game();
 
-  //* hide rules screen
-  rulesScreen.hidden = true;
-
-  //* hide game screen
-  gameScreen.hidden = true;
-
-  //* unhide start screen
-  startScreen.hidden = false;
-
-  //* hide navbar
-  navBar.hidden = true;
+  //* unhide startScreen, hide the rest
+  unhide(startScreen);
 
   //* check if hamburger is activated
   if (hamburger.classList.contains('nav-activated')) {
@@ -184,8 +182,6 @@ function renderStartScreen() {
     renderSublinks();
   }
 
-  //* reset the new paragraph to empty
-  newPara.innerHTML = '';
 }
 
 function renderSublinks() {
@@ -239,13 +235,31 @@ function renderSublinkScreens(button) {
 //* ======================== RULES SCREEN ============================
 
 //!----- constants -----*/
+//* icons used in the gameplay
+const pictures = ['cherry', 'money', 'seven', 'crystal', 'kitten', 'bell', 'bullets', 'grenade'];
+
+//* create a class so easier to transform pictures into objects inside an array
+class Icon {
+  //* construct properties
+  constructor(alt) {
+    this.alt = alt;
+    this.src = `./assets/images/${alt}.png`;
+  }
+  //* add method that transforms the object into an img element on html
+  makeIntoElement(parent) {
+    return renderNewImg(this.alt, this.src, parent);
+  } 
+}
+
+//* cycle through pictures -> transform each item into an object -> push into new array
+const icons = pictures.map((item) => new Icon(item));
 
 //!----- state variables -----*/
 
 //!----- cached elements  -----*/
 
 //* save images in an array
-const images = document.querySelectorAll('#rules-screen .container img');
+let images = document.querySelectorAll('#rules-screen .container img');
 
 //* save #new-para to update innerHTML
 const newPara = document.querySelector('#new-para');
@@ -305,27 +319,9 @@ function newParagraph(image) {
 //* ======================== GAME SCREEN ============================
 
 //!----- constants -----*/
-//* icons used in the gameplay
-const pictures = ['cherry', 'money', 'seven', 'crystal', 'kitten', 'bell', 'bullets', 'grenade'];
-
-//* create a class so easier to transform pictures into objects inside an array
-class Icon {
-  //* construct properties
-  constructor(alt) {
-    this.alt = alt;
-    this.src = `./assets/images/${alt}.png`;
-
-    //* add method that transforms the object into an img element on html
-    this.makeIntoElement = () => renderNewImg(this.alt, this.src);
-  }
-}
-
-//* cycle through pictures -> trasnform each item into an object -> push into new array
-const icons = pictures.map((item) => new Icon(item));
 
 //* for easy mode: there are only 4 icons
 const easy = icons.slice(0, 4);
-
 
 //!----- state variables -----*/
 
@@ -367,7 +363,6 @@ spin.addEventListener('click', () => {
     renderResults(game.result);
   }
 
-  
 });
 
 //!----- render functions -----*/
@@ -377,7 +372,7 @@ function renderStartingIcons() {
 
   //* generate kitten icon three times
   for (let i=0; i<3; i++) {
-    icons[4].makeIntoElement();
+    icons[4].makeIntoElement(iconsDiv);
   }
 }
 
@@ -393,7 +388,7 @@ function renderSpin() {
     const iconChosen = generateRandomIcon();
 
     //* display random icons on screen
-    iconChosen.makeIntoElement();
+    iconChosen.makeIntoElement(iconsDiv);
 
     //* put icons generated into spinOutcome array
     game.spinOutcome.push(iconChosen);
@@ -415,7 +410,7 @@ function renderResults(text) {
   spinResult.append(newElement);
 }
 
-function renderNewImg(alt, src) {
+function renderNewImg(alt, src, parent) {
   //* create new img element
   const newImg = document.createElement('img');
 
@@ -424,7 +419,7 @@ function renderNewImg(alt, src) {
   newImg.setAttribute('alt', alt);
 
   //* append to iconDiv
-  iconsDiv.append(newImg);
+  parent.append(newImg);
 }
 
 
