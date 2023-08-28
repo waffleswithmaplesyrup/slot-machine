@@ -359,8 +359,11 @@ spin.addEventListener('click', () => {
 
     renderSpin();
     checkResult();
-  } else {
+  } else if (game.wallet < 5){
     game.result = "You don't have enough money.<br/>Game over.";
+    renderResults(game.result);
+  } else {
+    game.result = "You don't have enough money.<br/>Bet a lower amount.";
     renderResults(game.result);
   }
 
