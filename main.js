@@ -17,6 +17,9 @@ class Game {
     //* initial spin outcome value
     this.spinOutcome = [];
 
+    //* initial kitten save
+    this.kittenSave = 0;
+
     //* initial bet amount
     this.betAmt = 5;
 
@@ -25,7 +28,7 @@ class Game {
   }
 }
 
-const game = new Game();
+let game = new Game();
 
 
 //!----- cached elements  -----*/
@@ -81,6 +84,13 @@ function selectDifficulty() {
 //!----- render functions -----*/
 //* start game
 function renderStartGame() {
+  //* render wallet
+  wallet.innerText = game.wallet;
+  //* initialise bet selected
+  betSelect[0].selected = true;
+  //* empty result paragraph
+  renderResults('');
+  
   //* set #start-screen hidden 
   startScreen.hidden = true;
 
@@ -114,7 +124,6 @@ function renderRules() {
 
 //!----- other functions -----*/ 
 function startScreenActive() {
-
   selectDifficulty();
   //* listen to start button being clicked
   startButton.addEventListener('click', () => renderStartGame());
@@ -153,6 +162,10 @@ sublinkButtons.forEach((button) => {
 
 //!----- render functions -----*/
 function renderStartScreen() {
+
+  //* every time start screen is activated, initialise game object
+  game = new Game();
+
   //* hide rules screen
   rulesScreen.hidden = true;
 
@@ -271,7 +284,6 @@ function newParagraph(image) {
       newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${base}`;
       break;
     case 'crystal':
-    case 'kitten':
     case 'bell':
       newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${base+10}`;
       break;
@@ -280,6 +292,9 @@ function newParagraph(image) {
       break;
     case 'grenade':
       newPara.innerHTML = `outcome: at least 2 ${image} icons<br/>result: wallet - $50 (unless kitten save)`;
+      break;
+    case 'kitten':
+      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${base+10}<br/>kitten + bullets: save against grenade attack.`;
       break;
     default:
       console.log(image);
@@ -345,7 +360,7 @@ spin.addEventListener('click', () => {
     renderSpin();
     checkResult();
   } else {
-    game.result = "You don't have enough money.";
+    game.result = "You don't have enough money.<br/>Game over.";
     renderResults(game.result);
   }
 
@@ -391,7 +406,7 @@ function renderResults(text) {
 
   //* create new element
   const newElement = document.createElement('p');
-  newElement.innerText = text;
+  newElement.innerHTML = text;
 
   //* append into #spin-result
   spinResult.append(newElement);
@@ -461,9 +476,27 @@ function checkResult() {
   });
 
   if (game.spinOutcome['grenade'] >= 2) {
+    //* check if there is a kitten save && game difficulty is intermediate
+    if (game.kittenSave > 0 && game.difficulty === 'intermediate') {
+      //* you lose one kitten save 
+      game.kittenSave--;
+      game.result = 'Kitten saved you from grenade attack. You don\'t lose $50.';
+    } else {
       game.wallet -= 50;
       game.result = 'Grenade attack! You lose $50.';
+    }
+      
   } 
+
+  if (game.spinOutcome['kitten'] && game.spinOutcome['bullets']) {
+    //* check if game diffculty is intermediate
+    if (game.difficulty === 'intermediate') {
+      //* add one kitten save to game
+      game.kittenSave++;
+      game.result = 'You got kitten and bullets. You earn one kitten save. Congrats!';
+    }
+    
+  }
 
 
   wallet.innerText = game.wallet;
