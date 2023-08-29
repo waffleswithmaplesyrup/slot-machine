@@ -8,6 +8,7 @@
 
   <link rel="stylesheet" href="style.css">
   <script src="main.js" defer></script>
+
 </head>
 
 <body>
@@ -16,14 +17,15 @@
   <section id="start-screen">
     <h1>slots</h1>
 
-    <h2 id="start-game">start game</h2>
-    <h2 id="game-rules">game rules</h2>
+    <h2 id="start-game" class="start-game">start game</h2>
+    <h2 id="game-rules" class="game-rules">game rules</h2>
 
     <h3>difficulty</h3>
     <select name="difficulty" id="difficulty">
       <option value="easy" >easy</option>
       <option value="intermediate" selected>intermediate</option>
       <option value="hard">hard</option>
+      <option value="five-reels">five reels</option>
     </select>
 
     <div id="difficulty-info">
@@ -34,6 +36,9 @@
 
       <p class="hard" hidden><strong>beware of grenades!</strong><br />
         kittens and bullets won't save you now</p>
+
+      <p class="five-reels" hidden><strong>five reels</strong><br />
+        instead of three</p>
     </div>
 
   </section>
@@ -41,7 +46,7 @@
   <!-- navbar -->
   <section id="navbar" hidden>
     <nav>
-      <img id="logo" src="./assets/images/nav-logo.png" alt="slots">
+      <img id="logo" class="start-screen" src="./assets/images/nav-logo.png" alt="slots">
       <h3>slots</h3>
       <div id="hamburger">
         <div></div>
@@ -52,9 +57,9 @@
 
     <div id="sublinks" hidden>
       <nav>
-        <h4>game rules</h4>
-        <h4>start game</h4>
-        <h4>restart</h4>
+        <h4 class="game-rules">game rules</h4>
+        <h4 class="start-game">start game</h4>
+        <h4 class="start-screen">restart</h4>
       </nav>
     </div>
   </section>
@@ -66,14 +71,6 @@
 
     <div>
     <div class="container">
-      <img src="./assets/images/cherry.png" alt="cherry">
-      <img src="./assets/images/money.png" alt="money">
-      <img src="./assets/images/seven.png" alt="seven">
-      <img src="./assets/images/crystal.png" alt="crystal">
-      <img src="./assets/images/kitten.png" alt="kitten">
-      <img src="./assets/images/bell.png" alt="bell">
-      <img src="./assets/images/bullets.png" alt="bullets">
-      <img src="./assets/images/grenade.png" alt="grenade">
 
       <!-- when rules-screen is rendered, show all icons -->
 
@@ -98,7 +95,7 @@
   <!-- game screen -->
   <section id="game-screen" hidden>
     <header>
-      <h3 id="wallet">wallet: $<span>100</span></h3>
+      <h3 id="wallet">wallet: $<span>???</span></h3>
       <h4>bet amount: $
         <select name="bet" id="bet">
           <option value="5" selected>5</option>

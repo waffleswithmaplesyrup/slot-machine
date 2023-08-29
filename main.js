@@ -1,479 +1,468 @@
 //* ======================== START SCREEN ============================
 
 //!----- constants -----*/
-
+//* pictures in the reel
+const pictures = ['cherry', 'money', 'seven', 'crystal', 'kitten', 'bell', 'bullets', 'grenade'];
 
 //!----- state variables -----*/
-let difficulty = 'intermediate';
 
-class Game {
-  constructor() {
-    //* initial difficulty setting. can change
-    this.difficulty = 'intermediate';
+//* number of reels (change between 3 to 5)
+let numberOfReels = 3;
 
-    //* initial wallet amount
-    this.wallet = 100;
+//* initial variables
+const game = {
+  difficulty: 'intermediate',
 
-    //* initial spin outcome value
-    this.spinOutcome = [];
+  wallet: 100,
 
-    //* initial kitten save
-    this.kittenSave = 0;
+  betAmount: 5,
 
-    //* initial bet amount
-    this.betAmt = 5;
+  kittenSave: 0,
 
-    //* inital result
-    this.result = '';
-  }
-}
+  spinOutcome: {},
 
-let game = new Game();
+  result: ''
+};
 
+//! ====================================================================================
 
 //!----- cached elements  -----*/
+//* save all screens in an array
+const allScreens = document.querySelectorAll('section');
 
-//? save app screens
-//* save #start-screen
-const startScreen = document.querySelector('#start-screen');
-//* save #rules-screen
-const rulesScreen = document.querySelector('#rules-screen');
-//* save #game-screen
-const gameScreen = document.querySelector('#game-screen');
-//* save navbar
-const navBar = document.querySelector('#navbar');
+//* create new array that stores the id and contents of each screen into an object
+const screens = Object.keys(allScreens).map((index) => {
+  //* create an empty object
+  const obj = {};
+  //* add id of each screen into obj
+  obj.id = allScreens[index].getAttribute('id');
+  //* add content of each screen into obj
+  obj.contents = allScreens[index];
+  return obj;
+});
 
-//* save screens inside array
-const screens = [startScreen, rulesScreen, gameScreen, navBar];
 
-// //* save screens inside an array
-// const screens = document.querySelectorAll('section');
+//* save all h2 buttons on start screen into an array
+const buttonsOnStartScreen = document.querySelectorAll('#start-screen h2');
 
-//? save start screen buttons
-//* save #difficulty dropdown menu element
-const dropDown = document.querySelector('#difficulty');
-//* save #start-game button
-const startButton = document.querySelector('#start-game');
-//* save #game-rules button
-const rulesButton = document.querySelector('#game-rules');
+//* save difficulty setting drop down menu
+const difficultySetting = document.querySelector('#difficulty');
 
-//? save changing text
-//* save #difficulty-info paragraphs
+//* save difficulty info paragraphs as an array
 const difficultyInfo = document.querySelectorAll('#difficulty-info p');
 
 //!----- event listeners -----*/
 
-//* select difficulty
-function selectDifficulty() {
-  //* listen to dropDown being clicked
-  dropDown.addEventListener('change', (event) => {
-    //* save the game difficulty chosen
-    game.difficulty = event.target.value;
-    
-    //* cycle through difficultyInfo array
-    difficultyInfo.forEach((infoElement) => {
-      //* check if game difficulty matches one of the element's classes
-      if (infoElement.classList.contains(game.difficulty)) {
-        //* unhide the paragraph
-        infoElement.hidden = false;
-      } else {
-        //* hide the rest
-        infoElement.hidden = true;
-      }
-    });
+//* cycle through buttons array
+buttonsOnStartScreen.forEach((button) => {
 
-  });
-}
+  //* listen to button being clicked
+  button.addEventListener('click', (event) => renderScreens(event.target));
 
+});
+
+//* listen to difficulty setting being changed
+difficultySetting.addEventListener('change', (event) => changeDifficulty(event.target.value));
 
 //!----- render functions -----*/
-//* start game
-function renderStartGame() {
-  //* render wallet
-  wallet.innerText = game.wallet;
-  //* initialise bet selected
-  betSelect[0].selected = true;
-  //* empty result paragraph
-  renderResults('');
 
-  //* unhide gameScreen, hide the rest
-  unhide(gameScreen);
+function renderScreens(button) {
 
-  //* render starting icons
-  renderStartingIcons();
+  //* if button classList contains 'start-game'
+  if (button.classList.contains('start-game')) {
+    //* go to game screen
+    changeScreenTo('game-screen');
+
+    //* render game screen
+    renderGameScreen();
+
+    //* if button classList contains 'game-rules'
+  } else if (button.classList.contains('game-rules')) {  
+    //* go to rules screen
+    changeScreenTo('rules-screen');
+
+    //* render rules screen
+    renderRulesScreen();
+
+    //* if button classList contains 'start-screen'
+  } else if (button.classList.contains('start-screen')) {
+    //* go to rules screen
+    changeScreenTo('start-screen');
+
+    //* reset the game
+    renderReset();
+  }
+
 }
 
-//* show game rules
-function renderRules() {
-
-  //* unhide rulesScreen, hide the rest
-  unhide(rulesScreen);
+function renderReset() {
+  game.wallet = 100;
+  game.kittenSave = 0;
+  game.spinOutcome = {};
+  game.result = '';
 }
 
 //!----- other functions -----*/ 
-//* unhide selected screen, hide the rest
-function unhide(main) {
-  //* unhide screen
-  main.hidden = false;
 
+function changeScreenTo(main) {
   //* cycle through screens array
   screens.forEach((screen) => {
-    //* hide all screens that are not main
-    if (screen !== main) {
-      screen.hidden = true;
-      //* if main is not startScreen
-      if (main !== startScreen) {
+    //* check if the screen id matches the button selected
+      if (screen.id === main) {
+        //* unhide selected screen
+        screen.contents.hidden = false;
         //* unhide navbar
-        navBar.hidden = false;
+        screens[1].contents.hidden = false;
+        //* set sublinks to hidden
+        sublinks.hidden = true;
+      } else {
+        //* hide the rest
+        screen.contents.hidden = true;
       }
-    }
+      //* only for start-screen
+      if (screen.id === 'start-screen') {
+        //* hide navbar
+        screens[1].contents.hidden = true;
+      }
   });
+  
 }
 
-function startScreenActive() {
-  selectDifficulty();
-  //* listen to start button being clicked
-  startButton.addEventListener('click', () => renderStartGame());
-  //* listen to rules button being clicked
-  rulesButton.addEventListener('click', () => renderRules());
+function changeDifficulty(choice) {
+  //* change value of game difficulty to what has been selected
+  game.difficulty = choice;
+
+  //* cycle through difficultyInfo
+  difficultyInfo.forEach((info) => {
+    //* unhide paragraph where its class list contains the selected game difficulty
+    if (info.classList.contains(game.difficulty)) {
+      info.hidden = false;
+    } else {  //* hide the rest
+      info.hidden = true;
+    }
+  });
+
+  //* if game difficulty is set to 'five-reels'
+  if (game.difficulty === 'five-reels') {
+    numberOfReels = 5;
+  } else {
+    numberOfReels = 3;
+  }
+
 }
-startScreenActive();
 
 //* ======================== NAV BAR ============================
 
-//!----- constants -----*/
-
-//!----- state variables -----*/
-
 //!----- cached elements  -----*/
+//* save logo as a clickable button
 const logo = document.querySelector('#logo');
+
+//* save hamburger as a clickable button
 const hamburger = document.querySelector('#hamburger');
+
+//* save sublinks to unhide and hide when hamburger is clicked
 const sublinks = document.querySelector('#sublinks');
+
+//* save sublink buttons 
 const sublinkButtons = document.querySelectorAll('#sublinks h4');
 
-
 //!----- event listeners -----*/
-//* listen to logo being clicked and go back to start screen
-logo.addEventListener('click', () => renderStartScreen());
+//* listen to logo being clicked -> redirect to start-screen
+logo.addEventListener('click', (event) => renderScreens(event.target));
 
-//* listen to hamburger being clicked and show and hide sublinks
-let hamburgerCount = 0;
+//* listen to hamburger being clicked -> unhide/hide sublinks
 hamburger.addEventListener('click', () => renderSublinks());
 
-//* cycle through sublinkButtons
+//* cycle through sublink buttons
 sublinkButtons.forEach((button) => {
-  //* listen to button being clicked and render sublink screens
-  button.addEventListener('click', (event) => renderSublinkScreens(event.target.innerText));
+  //* listen to button being clicked -> redirect to their respective screens
+  button.addEventListener('click', (event) => renderScreens(event.target));
 });
 
-
 //!----- render functions -----*/
-function renderStartScreen() {
-
-  //* every time start screen is activated, reset game
-  game = new Game();
-
-  //* unhide startScreen, hide the rest
-  unhide(startScreen);
-
-  //* check if hamburger is activated
-  if (hamburger.classList.contains('nav-activated')) {
-    //* close sublinks
-    renderSublinks();
-  }
-
-}
-
 function renderSublinks() {
-  if (hamburgerCount % 2 === 0) {
-    //* set hamburger nav active
-    hamburger.classList.add('nav-activated');
-
-    //* unhide sublinks
+  //* if sublinks is hidden
+  if (sublinks.hidden === true) {
+    //* unhide it
     sublinks.hidden = false;
   } else {
-    //* remove nav-activated class
-    hamburger.classList.remove('nav-activated');
-    //* hide sublinks
     sublinks.hidden = true;
   }
-  
-  hamburgerCount++;
 }
-
-function renderSublinkScreens(button) {
-  switch(button) {
-    //* if 'game rules' is clicked
-    case 'game rules':
-      //* render rules screen
-      renderRules();
-      //* close sublinks
-      renderSublinks();
-      break;
-    //* if 'start game' is clicked
-    case 'start game':
-      //* render game screen
-      renderStartGame();
-      //* close sublinks
-      renderSublinks();
-      break;
-    //* if 'restart' is clicked
-    case 'restart':
-      //* render start screen
-      renderStartScreen();
-      break;
-    default:
-  }
-  //* reset the new paragraph to empty
-  newPara.innerHTML = '';
-}
-
-//!----- other functions -----*/
-
-
 
 //* ======================== RULES SCREEN ============================
 
-//!----- constants -----*/
-//* icons used in the gameplay
-const pictures = ['cherry', 'money', 'seven', 'crystal', 'kitten', 'bell', 'bullets', 'grenade'];
-
-//* create a class so easier to transform pictures into objects inside an array
-class Icon {
-  //* construct properties
-  constructor(alt) {
-    this.alt = alt;
-    this.src = `./assets/images/${alt}.png`;
-  }
-  //* add method that transforms the object into an img element on html
-  makeIntoElement(parent) {
-    return renderNewImg(this.alt, this.src, parent);
-  } 
-}
-
-//* cycle through pictures -> transform each item into an object -> push into new array
-const icons = pictures.map((item) => new Icon(item));
-
-//!----- state variables -----*/
-
 //!----- cached elements  -----*/
-
-//* save images in an array
-let images = document.querySelectorAll('#rules-screen .container img');
-
-//* save #new-para to update innerHTML
-const newPara = document.querySelector('#new-para');
-
-//!----- event listeners -----*/
-
-//* cycle through array
-images.forEach((img) => {
-
-  //* listen to picture being clicked
-  img.addEventListener('click', (event) => {
-
-    //* create new paragraph with rules relating to the icon clicked
-    newParagraph(event.target.alt);
-
-    //* add class opacity to a clicked image for 100ms
-    img.classList.add('opacity');
-    setTimeout(() => {img.classList.remove('opacity')}, 100);
-
-  });
-  
-
-});
-
+//* save the container to store all icons
+const imageContainer = document.querySelector('#rules-screen .container');
+//* save the empty paragraph to store special rules
+const newParagraph = document.querySelector('#new-para');
 
 //!----- render functions -----*/
+function renderImage(source, location) {
+  //* create new img
+  const newImg = document.createElement('img');
 
-//!----- other functions -----*/
-function newParagraph(image) {
-  const base = 10;
+  //* give newImg an alt and src
+  newImg.setAttribute('alt', source);
+  newImg.setAttribute('src', `./assets/images/${source}.png`);
+
+  //* append into image container
+  // imageContainer.append(newImg);
+
+  //* append into image container
+  location.append(newImg);
+}
+
+function renderRulesImages() {
+  //* cycle through pictures array -> render the pictures into the screen
+  pictures.forEach((picture) => renderImage(picture, imageContainer));
+}
+
+function renderRulesScreen() {
+
+  //* empty imagesContainer
+  imageContainer.innerHTML = '';
+  renderRulesImages();
+
+  //* save images in rules screen
+  const images = imageContainer.childNodes;
+
+  //* empty newParagraph
+  newParagraph.innerHTML = '';
+
+  //!----- event listeners -----*/
+
+  //* cycle through images array
+  images.forEach((image) => {
+
+    //* listen to image being clicked
+    image.addEventListener('click', (event) => renderRulesParagraph(event.target.alt));
+
+  });
+}
+
+function renderRulesParagraph(image) {
   //* display specific text for each icon
   switch (image) {
     case 'cherry':
     case 'money':
     case 'seven':
-      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${base}`;
+      newParagraph.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${10}`;
       break;
     case 'crystal':
     case 'bell':
-      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${base+10}`;
+      newParagraph.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${20}`;
       break;
     case 'bullets':
-      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${base+20}`;
+      newParagraph.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${30}`;
       break;
     case 'grenade':
-      newPara.innerHTML = `outcome: at least 2 ${image} icons<br/>result: wallet - $50 (unless kitten save)`;
+      newParagraph.innerHTML = `outcome: at least 2 ${image} icons<br/>result: wallet - $50 (unless kitten save)`;
       break;
     case 'kitten':
-      newPara.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${base+10}<br/>kitten + bullets: save against grenade attack.`;
+      newParagraph.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${20}<br/>kitten + bullets: save against grenade attack.`;
       break;
     default:
       console.log(image);
   }
 }
 
-
 //* ======================== GAME SCREEN ============================
 
-//!----- constants -----*/
-
-//* for easy mode: there are only 4 icons
-const easy = icons.slice(0, 4);
-
-//!----- state variables -----*/
-
 //!----- cached elements  -----*/
-const wallet = document.querySelector('#wallet span');
-const betSelect = document.querySelector('#bet');
+//* save the location where icons will render
+const iconsLocation = document.querySelector('#icons');
+//* save spin button
 const spin = document.querySelector('#spin');
-const iconsDiv = document.querySelector('#icons');
+//* save container to store spin result
+const spinResult = document.querySelector('#spin-result');
+//* save wallet container
+const wallet = document.querySelector('#wallet span');
+//* save bet selector
+const betSelector = document.querySelector('#bet');
 
 //!----- event listeners -----*/
 
-//* listen to betSelect being clicked
-betSelect.addEventListener('change', (event) => {
-  //* save the bet amount chosen
-  game.betAmt = parseInt(event.target.value);
-
-});
+//* listen to bet selector being changed -> change bet amount
+betSelector.addEventListener('change', (event) => game.betAmount = event.target.value);
 
 //* listen to spin button being clicked
-spin.addEventListener('click', () => {
-  //* result back to empty
-  game.result = '';
-
-  //* check if wallet amount is more than bet amount
-  if (game.wallet >= game.betAmt) {
-    //* bet amount get removed from wallet
-    game.wallet -= game.betAmt;
-
-    //* render wallet
-    wallet.innerText = game.wallet;
-
-    renderSpin();
-    checkResult();
-  } else if (game.wallet < 5){
-    game.result = "You don't have enough money.<br/>Game over.";
-    renderResults(game.result);
-  } else {
-    game.result = "You don't have enough money.<br/>Bet a lower amount.";
-    renderResults(game.result);
-  }
-
-});
+spin.addEventListener('click', renderSpin);
 
 //!----- render functions -----*/
-function renderStartingIcons() {
-  //* empty iconsDiv
-  iconsDiv.innerHTML = '';
 
-  //* generate kitten icon three times
-  for (let i=0; i<3; i++) {
-    icons[4].makeIntoElement(iconsDiv);
+function renderGameScreen() {
+
+  //* render the icons when game screen is active
+  renderStartingIcons();
+
+  //* render wallet
+  renderWallet();
+
+  //* render empty result
+  renderResult();
+}
+
+//* render starting icons
+function renderStartingIcons() {
+  //* empty icons container
+  iconsLocation.innerHTML = '';
+
+  //* cycle through numberOfReels
+  for (let i=0; i<numberOfReels; i++) {
+    //* render starting icons which is the kitten icon
+    renderImage(pictures[4], iconsLocation);
+  }
+}
+
+function renderIcons() {
+  //* empty the container first
+  iconsLocation.innerHTML = '';
+
+  //* generate image numberOfReels amount of times
+  for (let i=0; i<numberOfReels; i++) {
+    renderImage(generateRandom(), iconsLocation);
   }
 }
 
 function renderSpin() {
-  //* empty iconsDiv
-  iconsDiv.innerHTML = '';
-  //* each time spin button is clicked, empty spinOutcome
-  game.spinOutcome = [];
-
-  //* generate an icon three times
-  for (let i=0; i<3; i++) {
-    //* pick random icon
-    const iconChosen = generateRandomIcon();
-
-    //* display random icons on screen
-    iconChosen.makeIntoElement(iconsDiv);
-
-    //* put icons generated into spinOutcome array
-    game.spinOutcome.push(iconChosen);
-  }
   
+  //* only when wallet amount is more than or equal to bet amount
+  if (game.wallet >= game.betAmount) {
+    //* empty result
+    game.result = '';
+
+    //* generate the icons
+    renderIcons();
+
+    //* remove bet amount from wallet
+    game.wallet -= game.betAmount;
+
+    //* save spin outcome inside game.spinOutcome
+    game.spinOutcome = spinOutcome();
+
+    //* check result
+    checkResult();
+
+    //* render wallet
+    renderWallet();
+
+  } else if (game.wallet < 5){
+    game.result = "You don't have enough money.<br/>Game over.";
+    renderResult();
+  } else {
+    game.result = "You don't have enough money.<br/>Bet a lower amount.";
+    renderResult();
+  }
 }
 
-function renderResults(text) {
-  const spinResult = document.querySelector('#spin-result');
+function renderWallet() {
+  wallet.innerHTML = game.wallet;
+}
 
-  //* empty spinResult
+function renderResult() {
+  //* empty spin result
   spinResult.innerHTML = '';
 
   //* create new element
   const newElement = document.createElement('p');
-  newElement.innerHTML = text;
 
-  //* append into #spin-result
+  //* set innerHTML to game rsult
+  newElement.innerHTML = game.result;
+
+  //* append into spin result
   spinResult.append(newElement);
 }
 
-function renderNewImg(alt, src, parent) {
-  //* create new img element
-  const newImg = document.createElement('img');
 
-  //* set iconChosen as img src
-  newImg.setAttribute('src', src);
-  newImg.setAttribute('alt', alt);
-
-  //* append to iconDiv
-  parent.append(newImg);
+//!----- other functions -----*/ 
+//* function that picks a random image from pictures array
+function generateRandom() {
+  let random = 0;
+  if (game.difficulty === 'easy') {
+    random = Math.floor(Math.random() * pictures.slice(0, 4).length);
+  } else {  //* for the rest of the difficulty settings
+    random = Math.floor(Math.random() * pictures.length);
+  }
+  return pictures[random];
 }
 
+//* save spin outcome inside game.spinOutcome
+function spinOutcome() {
 
-//!----- other functions -----*/
+  //* save icon elements
+  const icons = iconsLocation.childNodes;
+  //* store icons generated inside obj
+  const obj = {};
+  icons.forEach((icon) => {
+    //* check if icon already exists inside obj
+    if (obj[icon.alt]) {
+      //* add one to the value
+      obj[icon.alt]++;
+    } else {
+      obj[icon.alt] = 1;
+    }
+  });
 
-function generateRandomIcon() {
-  let randomIndex = '';
-  //* if difficulty is easy
-  if (game.difficulty === 'easy') {
-    //* only select from ['cherry', 'money', 'seven', 'crystal']
-    randomIndex = Math.floor(Math.random() * easy.length);
-    return easy[randomIndex];
-  } else {
-    //* intermediate and hard modes use all icons
-    randomIndex = Math.floor(Math.random() * icons.length);
-    return icons[randomIndex];
-  }
+  //* save spin outcome inside game.spinOutcome
+  return obj;
 }
 
 function checkResult() {
-  game.spinOutcome = game.spinOutcome.reduce(iconCount, {});
-  console.log(game.spinOutcome);
 
+  //* edit game result if you get 2 or more of the same icon
+  checkWinningIcons();
+
+  //* edit game result if you get grenade attack
+  checkGrenadeAttack();
+  
+  //* edit kitten save if spin outcome results in kitten and bullets
+  checkKittenSave();
+  
+  //* render result
+  renderResult();
+}
+
+function checkWinningIcons() {
   ['cherry', 'money', 'seven'].forEach((item) => {
-    if (game.spinOutcome[item] === 3) {
-      game.wallet += game.betAmt * 10;
-      game.result = `Three ${item}s. You earn $${game.betAmt*10}.`;
-    } else if (game.spinOutcome[item] === 2) {
-      game.wallet += game.betAmt * 2;
-      game.result = `Two ${item}s. You earn $${game.betAmt * 2}.`;
+    //* if outcome has maximum number of the same item
+    if (game.spinOutcome[item] === numberOfReels) {
+      game.wallet += game.betAmount * 10;
+      game.result = `Three ${item}s. You earn $${game.betAmount*10}.`;
+
+      //* if outcome has 2 same items (for numberOfReels=3) or 3 same items (for numberOfReels=5)
+    } else if (game.spinOutcome[item] >= Math.ceil(numberOfReels/2)) {
+      game.wallet += game.betAmount * 2;
+      game.result = `Two ${item}s. You earn $${game.betAmount * 2}.`;
     } 
   });
 
   ['crystal', 'kitten', 'bell'].forEach((item) => {
-    if (game.spinOutcome[item] === 3) {
-      game.wallet += game.betAmt * 20;
-      game.result = `Three ${item}s. You earn $${game.betAmt*20}.`;
-    } else if (game.spinOutcome[item] === 2) {
-      game.wallet += game.betAmt * 2;
-      game.result = `Two ${item}s. You earn $${game.betAmt * 2}.`;
+    if (game.spinOutcome[item] === numberOfReels) {
+      game.wallet += game.betAmount * 20;
+      game.result = `Three ${item}s. You earn $${game.betAmount*20}.`;
+
+    } else if (game.spinOutcome[item] >= Math.ceil(numberOfReels/2)) {
+      game.wallet += game.betAmount * 2;
+      game.result = `Two ${item}s. You earn $${game.betAmount * 2}.`;
     } 
   });
 
   ['bullets'].forEach((item) => {
-    if (game.spinOutcome[item] === 3) {
-      game.wallet += game.betAmt * 30;
-      game.result = `Three ${item}. You earn $${game.betAmt*30}.`;
-    } else if (game.spinOutcome[item] === 2) {
-      game.wallet += game.betAmt * 2;
-      game.result = `Two ${item}. You earn $${game.betAmt * 2}.`;
+    if (game.spinOutcome[item] === numberOfReels) {
+      game.wallet += game.betAmount * 30;
+      game.result = `Three ${item}. You earn $${game.betAmount*30}.`;
+
+    } else if (game.spinOutcome[item] >= Math.ceil(numberOfReels/2)) {
+      game.wallet += game.betAmount * 2;
+      game.result = `Two ${item}. You earn $${game.betAmount * 2}.`;
     } 
   });
+}
 
-  if (game.spinOutcome['grenade'] >= 2) {
+function checkGrenadeAttack() {
+  if (game.spinOutcome['grenade'] >= Math.ceil(numberOfReels/2)) {
     //* check if there is a kitten save && game difficulty is intermediate
     if (game.kittenSave > 0 && game.difficulty === 'intermediate') {
       //* you lose one kitten save 
@@ -484,8 +473,11 @@ function checkResult() {
       game.result = 'Grenade attack! You lose $50.';
     }
       
-  } 
+  }
+}
 
+function checkKittenSave() {
+  //* when spin outcome has both kitten and bullets
   if (game.spinOutcome['kitten'] && game.spinOutcome['bullets']) {
     //* check if game diffculty is intermediate
     if (game.difficulty === 'intermediate') {
@@ -493,21 +485,5 @@ function checkResult() {
       game.kittenSave++;
       game.result = 'You got kitten and bullets. You earn one kitten save. Congrats!';
     }
-    
   }
-
-
-  wallet.innerText = game.wallet;
-  console.log(game.wallet);
-  renderResults(game.result);
 }
-
-function iconCount(obj, currentIcon) {
-  if (obj[currentIcon.alt]) {
-    obj[currentIcon.alt] += 1;
-  } else {
-    obj[currentIcon.alt] = 1;
-  }
-  return obj;
-}
-
