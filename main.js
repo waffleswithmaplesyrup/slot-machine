@@ -67,6 +67,8 @@ difficultySetting.addEventListener('change', (event) => changeDifficulty(event.t
 //!----- render functions -----*/
 
 function renderScreens(button) {
+  //* add click sound
+  playClickSound();
 
   //* if button classList contains 'start-game'
   if (button.classList.contains('start-game')) {
@@ -175,7 +177,11 @@ const sublinkButtons = document.querySelectorAll('#sublinks h4');
 logo.addEventListener('click', (event) => renderScreens(event.target));
 
 //* listen to hamburger being clicked -> unhide/hide sublinks
-hamburger.addEventListener('click', () => renderSublinks());
+hamburger.addEventListener('click', () => {
+  //* add click sound
+  playClickSound();
+  renderSublinks();
+});
 
 //* cycle through sublink buttons
 sublinkButtons.forEach((button) => {
@@ -241,7 +247,17 @@ function renderRulesScreen() {
   images.forEach((image) => {
 
     //* listen to image being clicked
-    image.addEventListener('click', (event) => renderRulesParagraph(event.target.alt));
+    image.addEventListener('click', (event) => {
+      //* show special paragraphs
+      renderRulesParagraph(event.target.alt);
+
+      //* add class 'opacity' to clicked icon then remove after 100ms
+      event.target.classList.add('opacity');
+      //* add a click sound effect
+      playClickSound();
+      setTimeout(() => event.target.classList.remove('opacity'), 100);
+      
+    });
 
   });
 }
@@ -344,6 +360,10 @@ function renderSpin() {
   
   //* only when wallet amount is more than or equal to bet amount
   if (game.wallet >= game.betAmount) {
+
+    //* play spin sound
+    playSpinSound();
+
     //* empty result
     game.result = '';
 
@@ -356,28 +376,43 @@ function renderSpin() {
     //* save spin outcome inside game.spinOutcome
     game.spinOutcome = spinOutcome();
 
-    //* check result
-    checkResult();
+    //* check result with a delay of 800ms
+    setTimeout(checkResult, 800);
+
 
     //* render wallet
     renderWallet();
+
+    renderResult();
 
     //* if wallet has a negative value
   } else if (game.wallet < 0){
     //* game over
     game.result = "You owe the casino money.<br/>You'll have to work for us to pay back the debt.<br/>Game over.";
+
+    //* play game over sound
+    playGameOverSound();
+
     renderResult();
 
     //* if wallet has less than the lowest bet amount
   } else if (game.wallet < 5) {
     //* game over
     game.result = "You don't have enough money.<br/>Game over.";
+
+    //* play game over sound
+    playGameOverSound();
+
     renderResult();
 
     //* if bet amount chosen is larger than wallet amount
   } else {
     //* prompt player to pick a lower bet amount
     game.result = "You don't have enough money.<br/>Bet a lower amount.";
+
+    //* play warning sound
+    playWarningSound();
+
     renderResult();
   }
 }
@@ -404,6 +439,51 @@ function renderResult() {
   spinResult.append(newElement);
 }
 
+//!----- sound functions -----*/ 
+function playClickSound() {
+  const sound = new Audio('./assets/sounds/click.mp4');
+  sound.play();
+}
+
+function playSpinSound() {
+  const sound = new Audio('./assets/sounds/spin.mp3');
+  sound.play();
+}
+
+function playMeowSound() {
+  const sound = new Audio('./assets/sounds/meow.mp4');
+  sound.play();
+}
+
+function playKittenSaveSound() {
+  const sound = new Audio('./assets/sounds/kitten-save.mp3');
+  sound.play();
+}
+
+function playVictorySound() {
+  const sound = new Audio('./assets/sounds/victory.mp3');
+  sound.play();
+}
+
+function playWinningSound() {
+  const sound = new Audio('./assets/sounds/earn-money.mp3');
+  sound.play();
+}
+
+function playGrenadeSound() {
+  const sound = new Audio('./assets/sounds/grenade.mp3');
+  sound.play();
+}
+
+function playWarningSound() {
+  const sound = new Audio('./assets/sounds/warning.mp3');
+  sound.play();
+}
+
+function playGameOverSound() {
+  const sound = new Audio('./assets/sounds/game-over.mp3');
+  sound.play();
+}
 
 //!----- other functions -----*/ 
 //* function that picks a random image from pictures array
@@ -451,6 +531,9 @@ function checkResult() {
   
   //* render result
   renderResult();
+
+  //* render wallet
+  renderWallet();
 }
 
 function checkWinningIcons() {
@@ -462,11 +545,13 @@ function checkWinningIcons() {
     if (game.spinOutcome[item] === maxNumberOfReels) {
       game.wallet += game.betAmount * 10;
       game.result = `${maxNumberOfReels} ${item}s. You earn $${game.betAmount*10}.`;
+      playVictorySound();
 
       //* if outcome has 2 same items (for numberOfReels=3) or 3 same items (for numberOfReels=5)
     } else if (game.spinOutcome[item] >= winningNumberOfReels) {
       game.wallet += game.betAmount * 2;
       game.result = `${winningNumberOfReels} ${item}s. You earn $${game.betAmount * 2}.`;
+      playWinningSound();
     } 
   });
 
@@ -474,10 +559,12 @@ function checkWinningIcons() {
     if (game.spinOutcome[item] === maxNumberOfReels) {
       game.wallet += game.betAmount * 20;
       game.result = `${maxNumberOfReels} ${item}s. You earn $${game.betAmount*20}.`;
+      playVictorySound();
 
     } else if (game.spinOutcome[item] >= winningNumberOfReels) {
       game.wallet += game.betAmount * 2;
       game.result = `${winningNumberOfReels} ${item}s. You earn $${game.betAmount * 2}.`;
+      playWinningSound();
     } 
   });
 
@@ -485,10 +572,12 @@ function checkWinningIcons() {
     if (game.spinOutcome[item] === maxNumberOfReels) {
       game.wallet += game.betAmount * 30;
       game.result = `${maxNumberOfReels} ${item}. You earn $${game.betAmount*30}.`;
+      playVictorySound();
 
     } else if (game.spinOutcome[item] >= winningNumberOfReels) {
       game.wallet += game.betAmount * 2;
       game.result = `${winningNumberOfReels} ${item}. You earn $${game.betAmount * 2}.`;
+      playWinningSound();
     } 
   });
 }
@@ -499,14 +588,27 @@ function checkGrenadeAttack() {
   if (game.spinOutcome['grenade'] >= grenadeAttackTrigger) {
     //* check if there is a kitten save && game difficulty is intermediate
     if (game.kittenSave > 0 && game.difficulty === 'intermediate') {
+
+      //* update result
       game.result = 'Kitten saved you from grenade attack. You don\'t lose $50.';
 
       //* use up one kitten save 
       game.kittenSave--;
+
+      //* play kitten save sound
+      playKittenSaveSound();
+
       //* render kitten save value
       renderKittenSaveValue();
     } else {
+
+      //* grenade attack. lose $50
       game.wallet -= 50;
+
+      //* play grenade sound
+      playGrenadeSound();
+
+      //* update result
       game.result = 'Grenade attack! You lose $50.';
     } 
   }
@@ -519,6 +621,11 @@ function checkKittenSave() {
     if (game.difficulty === 'intermediate') {
       //* add one kitten save to game
       game.kittenSave++;
+
+      //* play meow sound
+      playMeowSound();
+
+      //* update result
       game.result = 'You got kitten and bullets. You earn one kitten save. Congrats!';
 
       //* render kitten save value
