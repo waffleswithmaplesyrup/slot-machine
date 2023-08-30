@@ -8,7 +8,6 @@
 
   <link rel="stylesheet" href="style.css">
   <script src="main.js" defer></script>
-
 </head>
 
 <body>
@@ -25,7 +24,6 @@
       <option value="easy" >easy</option>
       <option value="intermediate" selected>intermediate</option>
       <option value="hard">hard</option>
-      <option value="five-reels">five reels</option>
     </select>
 
     <div id="difficulty-info">
@@ -36,9 +34,6 @@
 
       <p class="hard" hidden><strong>beware of grenades!</strong><br />
         kittens and bullets won't save you now</p>
-
-      <p class="five-reels" hidden><strong>five reels</strong><br />
-        instead of three</p>
     </div>
 
   </section>
@@ -82,9 +77,6 @@
 
         choose bet amounts from: $5, $10, $50<br/>
         
-        outcome: at least any two same icons<br/>
-        result: bet amount x 2<br/>
-        
         click on an icon for more info ...</p>
     </div>
     </div>
@@ -96,6 +88,7 @@
   <section id="game-screen" hidden>
     <header>
       <h3 id="wallet">wallet: $<span>???</span></h3>
+      <h3 id="kitten-save">kitten save: <span>???</span></h3>
       <h4>bet amount: $
         <select name="bet" id="bet">
           <option value="5" selected>5</option>
@@ -116,8 +109,6 @@
     </div>
 
   </section>
-
-
 
 </body>
 

@@ -142,11 +142,15 @@ function changeDifficulty(choice) {
     }
   });
 
-  //* if game difficulty is set to 'five-reels'
-  if (game.difficulty === 'five-reels') {
-    numberOfReels = 5;
+  //* only for intermediate level
+  if (game.difficulty === 'intermediate') {
+    //* unhide kitten save container that is on game screen
+    kittenSave.hidden = false;
+
+    //* for every other level
   } else {
-    numberOfReels = 3;
+    //* hide kitten save
+    kittenSave.hidden = true;
   }
 
 }
@@ -243,25 +247,28 @@ function renderRulesScreen() {
 }
 
 function renderRulesParagraph(image) {
+  const maxNumberOfReels = numberOfReels;
+  const winningNumberOfReels = Math.ceil(numberOfReels/2);
+
   //* display specific text for each icon
   switch (image) {
     case 'cherry':
     case 'money':
     case 'seven':
-      newParagraph.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${10}`;
+      newParagraph.innerHTML = `outcome: ${maxNumberOfReels} ${image} icons<br/>result: bet amount x ${10}<br/>outcome: at least any ${winningNumberOfReels} same icons<br/>result: bet amount x 2`;
       break;
     case 'crystal':
     case 'bell':
-      newParagraph.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${20}`;
+      newParagraph.innerHTML = `outcome: ${maxNumberOfReels} ${image} icons<br/>result: bet amount x ${20}<br/>outcome: at least any ${winningNumberOfReels} same icons<br/>result: bet amount x 2`;
       break;
     case 'bullets':
-      newParagraph.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${30}`;
+      newParagraph.innerHTML = `outcome: ${maxNumberOfReels} ${image} icons<br/>result: bet amount x ${30}<br/>outcome: at least any ${winningNumberOfReels} same icons<br/>result: bet amount x 2`;
       break;
     case 'grenade':
-      newParagraph.innerHTML = `outcome: at least 2 ${image} icons<br/>result: wallet - $50 (unless kitten save)`;
+      newParagraph.innerHTML = `outcome: at least ${winningNumberOfReels} ${image} icons<br/>result: wallet - $50 (unless kitten save)`;
       break;
     case 'kitten':
-      newParagraph.innerHTML = `outcome: 3 ${image} icons<br/>result: bet amount x ${20}<br/>kitten + bullets: save against grenade attack.`;
+      newParagraph.innerHTML = `outcome: ${maxNumberOfReels} ${image} icons<br/>result: bet amount x ${20}<br/>kitten + bullets: save against grenade attack.<br/>outcome: at least any ${winningNumberOfReels} same icons<br/>result: bet amount x 2`;
       break;
     default:
       console.log(image);
@@ -279,6 +286,10 @@ const spin = document.querySelector('#spin');
 const spinResult = document.querySelector('#spin-result');
 //* save wallet container
 const wallet = document.querySelector('#wallet span');
+//* save kitten save container
+const kittenSave = document.querySelector('#kitten-save');
+//* kitten save value
+const kittenSaveValue = document.querySelector('#kitten-save span');
 //* save bet selector
 const betSelector = document.querySelector('#bet');
 
@@ -299,6 +310,9 @@ function renderGameScreen() {
 
   //* render wallet
   renderWallet();
+
+  //* render kitten save value (only on intermediate level)
+  renderKittenSaveValue();
 
   //* render empty result
   renderResult();
@@ -348,10 +362,21 @@ function renderSpin() {
     //* render wallet
     renderWallet();
 
-  } else if (game.wallet < 5){
+    //* if wallet has a negative value
+  } else if (game.wallet < 0){
+    //* game over
+    game.result = "You owe the casino money.<br/>You'll have to work for us to pay back the debt.<br/>Game over.";
+    renderResult();
+
+    //* if wallet has less than the lowest bet amount
+  } else if (game.wallet < 5) {
+    //* game over
     game.result = "You don't have enough money.<br/>Game over.";
     renderResult();
+
+    //* if bet amount chosen is larger than wallet amount
   } else {
+    //* prompt player to pick a lower bet amount
     game.result = "You don't have enough money.<br/>Bet a lower amount.";
     renderResult();
   }
@@ -359,6 +384,10 @@ function renderSpin() {
 
 function renderWallet() {
   wallet.innerHTML = game.wallet;
+}
+
+function renderKittenSaveValue() {
+  kittenSaveValue.innerHTML = game.kittenSave;
 }
 
 function renderResult() {
@@ -425,54 +454,61 @@ function checkResult() {
 }
 
 function checkWinningIcons() {
+  const maxNumberOfReels = numberOfReels;
+  const winningNumberOfReels = Math.ceil(numberOfReels/2);
+
   ['cherry', 'money', 'seven'].forEach((item) => {
     //* if outcome has maximum number of the same item
-    if (game.spinOutcome[item] === numberOfReels) {
+    if (game.spinOutcome[item] === maxNumberOfReels) {
       game.wallet += game.betAmount * 10;
-      game.result = `Three ${item}s. You earn $${game.betAmount*10}.`;
+      game.result = `${maxNumberOfReels} ${item}s. You earn $${game.betAmount*10}.`;
 
       //* if outcome has 2 same items (for numberOfReels=3) or 3 same items (for numberOfReels=5)
-    } else if (game.spinOutcome[item] >= Math.ceil(numberOfReels/2)) {
+    } else if (game.spinOutcome[item] >= winningNumberOfReels) {
       game.wallet += game.betAmount * 2;
-      game.result = `Two ${item}s. You earn $${game.betAmount * 2}.`;
+      game.result = `${winningNumberOfReels} ${item}s. You earn $${game.betAmount * 2}.`;
     } 
   });
 
   ['crystal', 'kitten', 'bell'].forEach((item) => {
-    if (game.spinOutcome[item] === numberOfReels) {
+    if (game.spinOutcome[item] === maxNumberOfReels) {
       game.wallet += game.betAmount * 20;
-      game.result = `Three ${item}s. You earn $${game.betAmount*20}.`;
+      game.result = `${maxNumberOfReels} ${item}s. You earn $${game.betAmount*20}.`;
 
-    } else if (game.spinOutcome[item] >= Math.ceil(numberOfReels/2)) {
+    } else if (game.spinOutcome[item] >= winningNumberOfReels) {
       game.wallet += game.betAmount * 2;
-      game.result = `Two ${item}s. You earn $${game.betAmount * 2}.`;
+      game.result = `${winningNumberOfReels} ${item}s. You earn $${game.betAmount * 2}.`;
     } 
   });
 
   ['bullets'].forEach((item) => {
-    if (game.spinOutcome[item] === numberOfReels) {
+    if (game.spinOutcome[item] === maxNumberOfReels) {
       game.wallet += game.betAmount * 30;
-      game.result = `Three ${item}. You earn $${game.betAmount*30}.`;
+      game.result = `${maxNumberOfReels} ${item}. You earn $${game.betAmount*30}.`;
 
-    } else if (game.spinOutcome[item] >= Math.ceil(numberOfReels/2)) {
+    } else if (game.spinOutcome[item] >= winningNumberOfReels) {
       game.wallet += game.betAmount * 2;
-      game.result = `Two ${item}. You earn $${game.betAmount * 2}.`;
+      game.result = `${winningNumberOfReels} ${item}. You earn $${game.betAmount * 2}.`;
     } 
   });
 }
 
 function checkGrenadeAttack() {
-  if (game.spinOutcome['grenade'] >= Math.ceil(numberOfReels/2)) {
+  const grenadeAttackTrigger = Math.ceil(numberOfReels/2);
+
+  if (game.spinOutcome['grenade'] >= grenadeAttackTrigger) {
     //* check if there is a kitten save && game difficulty is intermediate
     if (game.kittenSave > 0 && game.difficulty === 'intermediate') {
-      //* you lose one kitten save 
-      game.kittenSave--;
       game.result = 'Kitten saved you from grenade attack. You don\'t lose $50.';
+
+      //* use up one kitten save 
+      game.kittenSave--;
+      //* render kitten save value
+      renderKittenSaveValue();
     } else {
       game.wallet -= 50;
       game.result = 'Grenade attack! You lose $50.';
-    }
-      
+    } 
   }
 }
 
@@ -484,6 +520,9 @@ function checkKittenSave() {
       //* add one kitten save to game
       game.kittenSave++;
       game.result = 'You got kitten and bullets. You earn one kitten save. Congrats!';
+
+      //* render kitten save value
+      renderKittenSaveValue();
     }
   }
 }
